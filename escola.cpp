@@ -1,23 +1,25 @@
 #include <iostream>
+#include <string>
 using namespace std;
 
-struct Alunos
+struct Aluno
 {
+    string id;
     string nome;
     int idade;
-    int notas[3];
+    double notas[3];
 };
 
 class Escola
 {
     int capacidade;
     int quantidade_alunos;
-    Alunos *dados;
+    Aluno *dados;
 
     void aumentarCapacidade()
     {
         capacidade += 5;
-        Alunos *novo = new Alunos[capacidade];
+        Aluno *novo = new Aluno[capacidade];
 
         for (int i = 0; i < quantidade_alunos; i++)
         {
@@ -29,6 +31,50 @@ class Escola
     }
 
 public:
+
+    Escola (int cap = 5) : capacidade(cap), quantidade_alunos(0)
+    {
+        dados = new Aluno[capacidade];
+    }
+
+    ~Escola()
+    {
+        delete[] dados;
+    }
+
+    void cadastrarAluno (Aluno aluno)
+    {
+        if (quantidade_alunos >= capacidade)
+        {
+            aumentarCapacidade();
+        }
+        dados[quantidade_alunos] = aluno;
+        quantidade_alunos++;
+    }
+
+    int calcular_media_aluno (Aluno aluno)
+    {
+        double soma = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            soma += aluno.notas[i];
+        }
+
+        return soma / 3;
+    }
+
+    void exibir_dados_aluno (Aluno aluno)
+    {
+        cout << aluno.id;
+    }
+
+    void exibir_dados_alunos ()
+    {
+        for (int i = 0; i < quantidade_alunos; i++0)
+        {
+            cout 
+        }
+    }
 
 };
 
