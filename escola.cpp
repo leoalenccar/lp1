@@ -58,6 +58,8 @@ struct Aluno
             cout << "nota " << contador << ": " << notas[i] << "\n";
             contador++;
         }
+
+        cout <<"\n";
     }
 };
 
@@ -257,7 +259,6 @@ public:
         int id;
         cout << "Digite o código ID do aluno: ";
         cin >> id;
-        cout << "\n";
 
         string codigo_id;
 
