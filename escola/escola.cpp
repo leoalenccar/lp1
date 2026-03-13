@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <thread>
 #include <chrono>
 using namespace std;
@@ -69,9 +70,9 @@ class Escola
     int quantidade_alunos;
     Aluno *dados;
 
-    void aumentarCapacidade()
+    void aumentarCapacidade(int n)
     {
-        capacidade += 5;
+        capacidade += n;
         Aluno *novo = new Aluno[capacidade];
 
         for (int i = 0; i < quantidade_alunos; i++)
@@ -95,11 +96,82 @@ public:
         delete[] dados;
     }
 
+    bool ler_arquivo(string arquivo)
+    {
+        ifstream file(arquivo);
+
+        if (!file.is_open())
+        {
+            cerr << "Erro! Não foi possível abrir o arquivo." << endl;
+            return false;
+        }
+
+        int qntdd_alunos;
+
+        file >> qntdd_alunos;
+        file.ignore();
+
+        if (qntdd_alunos > capacidade)
+        {
+            aumentarCapacidade(qntdd_alunos - capacidade);
+        }
+
+        for (int i = 0; i < qntdd_alunos; i++)
+        {
+            Aluno a;
+
+            string idade_aluno, nota1, nota2, nota3;
+
+            getline(file, a.id, ',');
+            getline(file, a.nome, ',');
+            getline(file, idade_aluno, ',');
+            getline(file, nota1, ',');
+            getline(file, nota2, ',');
+            getline(file, nota3);
+
+            a.idade = stoi(idade_aluno);
+            a.notas[0] = stod(nota1);
+            a.notas[1] = stod(nota2);
+            a.notas[2] = stod(nota3);
+
+            dados[quantidade_alunos] = a;
+            quantidade_alunos++;
+        }
+
+        return true;
+    }
+
+    bool salvar_arquvo(string arquivo)
+    {
+        ofstream file(arquivo);
+
+        if (!file.is_open())
+        {
+            cerr << "Erro! Não foi possível abrir o arquivo." << endl;
+            return false;
+        }
+
+        file << quantidade_alunos << endl;
+
+        for (int i = 0; i < quantidade_alunos; i++)
+        {
+            file << dados[i].id << "," 
+            << dados[i].nome << "," 
+            << dados[i].idade << "," 
+            << dados[i].notas[0] << ","
+            << dados[i].notas[1] << ","
+            << dados[i].notas[2] << endl;
+        }
+        file.close();
+
+        return true;
+    }
+
     void cadastrarAluno (Aluno aluno)
     {
         if (quantidade_alunos >= capacidade)
         {
-            aumentarCapacidade();
+            aumentarCapacidade(5);
         }
 
         int nmr_id = quantidade_alunos + 1;
@@ -124,6 +196,7 @@ public:
 
     void exibir_dados_alunos ()
     {
+        cout << "==========================\n";
         for (int i = 0; i < quantidade_alunos; i++)
         {
             dados[i].exibir_dados_aluno();
@@ -233,7 +306,8 @@ public:
         double notas[3];
 
         cout << "Digite o nome do aluno: ";
-        cin >> nome;
+        cin.ignore();
+        getline (cin, nome);
 
         cout << "\n";
 
@@ -324,6 +398,7 @@ public:
 
     void executar ()
     {
+        escola.ler_arquivo("dados_alunos.txt");
         while (true)
         {
             ui.mostrar_menu();
@@ -343,6 +418,7 @@ public:
                 break;
             }
         }
+        escola.salvar_arquvo("dados_alunos.txt");
     }
 };
 
